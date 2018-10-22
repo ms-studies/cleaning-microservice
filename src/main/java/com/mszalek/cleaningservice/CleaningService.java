@@ -1,5 +1,6 @@
 package com.mszalek.cleaningservice;
 
+import com.mszalek.cleaningservice.model.CleaningComplexity;
 import com.mszalek.cleaningservice.model.CleaningLog;
 import com.mszalek.cleaningservice.model.CleaningReport;
 import com.mszalek.cleaningservice.model.CleaningRequest;
@@ -28,6 +29,9 @@ public class CleaningService {
         request.setId(null);
         request.setCreateTime(LocalDateTime.now());
         request.setHandled(false);
+        if (request.getCleaningComplexity() == null) {
+            request.setCleaningComplexity(CleaningComplexity.SPECIAL);
+        }
         return requestRepository.save(request);
     }
 
