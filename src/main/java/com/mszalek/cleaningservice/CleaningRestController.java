@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 @RestController
 public class CleaningRestController {
@@ -24,7 +25,10 @@ public class CleaningRestController {
         //check in own repo if any of that rooms was cleaned already
         //check for special requests
         //return list of rooms to clean
-        return cleaningService.getAllCurrentRequests();
+
+        Collection<CleaningRequest> requests = cleaningService.getAllCurrentRequests();
+        requests.forEach((req) -> req.setCleaningComplexity(CleaningComplexity.SPECIAL));
+        return requests;
     }
 
     @PostMapping("cleaning/request")
