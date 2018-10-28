@@ -1,0 +1,27 @@
+@startuml
+:Manager: as admin
+:Cleaner: as cleaner
+
+
+admin -down-> (List all rooms)
+(List all rooms) <|-down- (Update room info) : extends
+admin -down-> (List facilities)
+(List facilities) <|-- (Move facility between rooms): extends
+(List all rooms) <|-- (Move facility between rooms): includes
+(List facilities) <|-- (Update facility): extends
+(List facilities) <|-- (Delete facility): extends
+
+admin --> (List all free rooms)
+admin --> (Book a room)
+(Book a room) <|-- (Update booking) : includes
+(Book a room) <|-- (Delete booking) : includes
+(Book a room) <|-- (List all bookings) : includes
+
+admin --> (Request cleaning)
+(Update request) -up-|> (Request cleaning): includes
+(Cancel request) -up-|> (Request cleaning): includes
+cleaner --> (List cleaning to do)
+cleaner --> (Confirm cleaning done)
+cleaner --> (Generate cleaning raport)
+admin --> (Generate cleaning raport)
+@enduml

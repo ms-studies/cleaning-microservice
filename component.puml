@@ -1,0 +1,42 @@
+@startuml
+title: Component diagram
+
+note right of RoomsAndFacilities #lightgreen : Spring Boot/Kotlin
+package RoomsAndFacilities {
+    [RoomsAndFacilities] as comp1
+    comp1 -- Rooms
+    comp1 -- Facilities
+    comp1 -right- db1
+    database "Rooms and facilities" as db1 {
+
+    }
+}
+
+note right of Reservations #lightblue : Django/Python
+package Reservations {
+    [Reservations] as comp2
+    comp2 -- Bookings
+    comp2 -- AvailableRooms
+    comp2 -right- db2
+    database "Bookings" as db2 {
+
+    }
+}
+
+note right of Cleaning #lightgreen : Spring Boot/Java
+package Cleaning {
+    [Cleaning] as comp3
+    comp3 -- Requests
+    comp3 -- Todos
+    comp3 -right- db3
+    database "Cleaning" as db3 {
+
+    }
+}
+
+
+comp3 .up.> Bookings
+comp2 .up.> Rooms
+comp2 .up.> Facilities
+
+@enduml
