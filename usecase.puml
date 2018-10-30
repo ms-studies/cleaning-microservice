@@ -2,26 +2,30 @@
 :Manager: as admin
 :Cleaner: as cleaner
 
+admin --> (Manage rooms)
+(Update room info) .up.> (Manage rooms) : extends
+(List all rooms) .up.> (Manage rooms) : extends
 
-admin -down-> (List all rooms)
-(List all rooms) <|-down- (Update room info) : extends
-admin -down-> (List facilities)
-(List facilities) <|-- (Move facility between rooms): extends
-(List all rooms) <|-- (Move facility between rooms): includes
-(List facilities) <|-- (Update facility): extends
-(List facilities) <|-- (Delete facility): extends
+admin --> (Manage facilities)
+(List facilities) .up.> (Manage facilities) : extends
+(Update facility) .up.> (Manage facilities) : extends
+(Delete facility) .up.> (Manage facilities) : extends
+(Add facility) .up.> (Manage facilities) : extends
+(Reserve facility for a room) .up.> (Manage facilities) : extends
 
-admin --> (List all free rooms)
-admin --> (Book a room)
-(Book a room) <|-- (Update booking) : includes
-(Book a room) <|-- (Delete booking) : includes
-(Book a room) <|-- (List all bookings) : includes
+admin --> (Manage bookings)
+(Book a room) .up.> (Manage bookings) : extends
+(Update booking) .up.> (Manage bookings) : extends
+(Delete booking) .up.> (Manage bookings) : extends
+(List bookings) .up.> (Manage bookings) : extends
 
-admin --> (Request cleaning)
-(Update request) -up-|> (Request cleaning): includes
-(Cancel request) -up-|> (Request cleaning): includes
+
+admin --> (Manage cleaning)
+(Request cleaning) .up.> (Manage cleaning) : extends
+(Update request) .up.> (Manage cleaning) : extends
+(Cancel request) .up.> (Manage cleaning) : extends
 cleaner --> (List cleaning to do)
 cleaner --> (Confirm cleaning done)
-cleaner --> (Generate cleaning raport)
-admin --> (Generate cleaning raport)
+cleaner --> (Generate cleaning report)
+(Generate cleaning report) .up.> (Manage cleaning) : extends
 @enduml

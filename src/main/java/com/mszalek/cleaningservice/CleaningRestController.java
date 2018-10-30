@@ -5,12 +5,13 @@ import com.mszalek.cleaningservice.model.CleaningLog;
 import com.mszalek.cleaningservice.model.CleaningReport;
 import com.mszalek.cleaningservice.model.CleaningRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.stream.Collectors;
 
 @RestController
 public class CleaningRestController {
@@ -32,18 +33,33 @@ public class CleaningRestController {
     }
 
     @PostMapping("cleaning/request")
-    CleaningRequest requestCleaning(@RequestBody CleaningRequest request) {
-        return cleaningService.addCleaningRequest(request);
+    ResponseEntity requestCleaning(@RequestBody CleaningRequest request) {
+        try {
+            CleaningRequest result = cleaningService.addCleaningRequest(request);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("something failed", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("cleaning/request")
-    CleaningRequest updateRequest(@RequestBody CleaningRequest request) {
-        return cleaningService.updateCleaningRequest(request);
+    ResponseEntity updateRequest(@RequestBody CleaningRequest request) {
+        try {
+            CleaningRequest result = cleaningService.updateCleaningRequest(request);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("something failed", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @DeleteMapping("cleaning/request")
-    boolean cancelRequest(@RequestParam(name = "requestId") Long id) {
-        return cleaningService.cancelCleaningRequest(id);
+    ResponseEntity cancelRequest(@RequestParam(name = "requestId") Long id) {
+        try {
+            cleaningService.cancelCleaningRequest(id);
+            return new ResponseEntity<>("ok", HttpStatus.OK);
+        } catch (EmptyResultDataAccessException e) {
+            return new ResponseEntity<>("no id", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping("cleaning/confirm")

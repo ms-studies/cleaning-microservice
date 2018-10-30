@@ -44,8 +44,7 @@ public class CleaningService {
             reqFromDb.setRoomNumber(request.getRoomNumber());
             return requestRepository.save(reqFromDb);
         } else {
-            //TODO: Throw Exception?
-            return null;
+            throw new CleaningException("Not valid request");
         }
     }
 
