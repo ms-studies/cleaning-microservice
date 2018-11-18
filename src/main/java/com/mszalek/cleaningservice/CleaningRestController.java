@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 
 @RestController
@@ -27,8 +28,8 @@ public class CleaningRestController {
         //check for special requests
         //return list of rooms to clean
 
-        Collection<CleaningRequest> requests = cleaningService.getAllCurrentRequests();
-        requests.forEach((req) -> req.setCleaningComplexity(CleaningComplexity.SPECIAL));
+        Collection<CleaningRequest> requests = cleaningService.getAllCurrentRequests(new ArrayList<>());
+//        requests.forEach((req) -> req.setCleaningComplexity(CleaningComplexity.SPECIAL));
         return requests;
     }
 
@@ -63,8 +64,13 @@ public class CleaningRestController {
     }
 
     @PostMapping("cleaning/confirm")
-    CleaningLog confirmCleaning(@RequestBody CleaningLog log) {
-        return cleaningService.confirmCleaning(log);
+    ResponseEntity confirmCleaning(@RequestBody CleaningLog log) {
+        try {
+            cleaningService.confirmCleaning(log);
+            return new ResponseEntity<>("ok", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("invalid cleaning log", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("cleaning/report")

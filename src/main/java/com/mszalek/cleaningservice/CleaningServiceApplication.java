@@ -26,13 +26,13 @@ class DummyDataCLR implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Stream.of(
-                new CleaningLog(100, LocalDateTime.now()),
-                new CleaningLog(101, LocalDateTime.now()),
-                new CleaningLog(102, LocalDateTime.now()),
-                new CleaningLog(103, LocalDateTime.now()),
-                new CleaningLog(104, LocalDateTime.now())
-        ).forEach(log -> cleaningLogRepositroy.save(log));
+//        Stream.of(
+//                new CleaningLog(100, LocalDateTime.now()),
+//                new CleaningLog(101, LocalDateTime.now()),
+//                new CleaningLog(102, LocalDateTime.now()),
+//                new CleaningLog(103, LocalDateTime.now()),
+//                new CleaningLog(104, LocalDateTime.now())
+//        ).forEach(log -> cleaningLogRepositroy.save(log));
     }
 }
 

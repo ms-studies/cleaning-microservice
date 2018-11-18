@@ -1,9 +1,6 @@
 package com.mszalek.cleaningservice;
 
-import com.mszalek.cleaningservice.model.CleaningComplexity;
-import com.mszalek.cleaningservice.model.CleaningLog;
-import com.mszalek.cleaningservice.model.CleaningReport;
-import com.mszalek.cleaningservice.model.CleaningRequest;
+import com.mszalek.cleaningservice.model.*;
 import com.mszalek.cleaningservice.repository.CleaningLogRepository;
 import com.mszalek.cleaningservice.repository.CleaningRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -39,9 +37,12 @@ public class CleaningService {
         Optional<CleaningRequest> optionalRequest = requestRepository.findById(request.getId());
         if (optionalRequest.isPresent()) {
             CleaningRequest reqFromDb = optionalRequest.get();
-            reqFromDb.setDeadline(request.getDeadline());
-            reqFromDb.setNote(request.getNote());
-            reqFromDb.setRoomNumber(request.getRoomNumber());
+            if(request.getDeadline() != null)
+                reqFromDb.setDeadline(request.getDeadline());
+            if(request.getNote() != null)
+                reqFromDb.setNote(request.getNote());
+            if(request.getRoomNumber() != 0)
+                reqFromDb.setRoomNumber(request.getRoomNumber());
             return requestRepository.save(reqFromDb);
         } else {
             throw new CleaningException("Not valid request");
@@ -53,12 +54,21 @@ public class CleaningService {
         return true;
     }
 
-    public Collection<CleaningRequest> getAllCurrentRequests() {
-        return requestRepository.findAll();
+    public Collection<CleaningRequest> getAllCurrentRequests(List<Reservation> reservations) {
+        List<CleaningLog> cleaningsDone = logRepository.findAll();
+        List<CleaningRequest> requests = requestRepository.findCleaningRequestsByHandled(false);
+        return requests;
     }
 
     public CleaningLog confirmCleaning(CleaningLog cleaningLog) {
         cleaningLog.setId(null);
+        if (cleaningLog.getTimeOfFinish() == null) {
+            cleaningLog.setTimeOfFinish(LocalDateTime.now());
+        }
+        requestRepository.findCleaningRequestsByRoomNumber(cleaningLog.getRoomNumber()).forEach(cleaningRequest -> {
+            cleaningRequest.setHandled(true);
+            requestRepository.save(cleaningRequest);
+        });
         return logRepository.save(cleaningLog);
     }
 
