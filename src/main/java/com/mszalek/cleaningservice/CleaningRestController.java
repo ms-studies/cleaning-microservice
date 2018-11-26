@@ -1,18 +1,17 @@
 package com.mszalek.cleaningservice;
 
-import com.mszalek.cleaningservice.model.CleaningComplexity;
-import com.mszalek.cleaningservice.model.CleaningLog;
-import com.mszalek.cleaningservice.model.CleaningReport;
-import com.mszalek.cleaningservice.model.CleaningRequest;
+import com.mszalek.cleaningservice.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 public class CleaningRestController {
@@ -20,16 +19,18 @@ public class CleaningRestController {
     @Autowired
     CleaningService cleaningService;
 
+    @Autowired
+    ReservationsService reservationsService;
+
     @GetMapping("cleaning/todo")
-    Collection<CleaningRequest> todoCleaning(@RequestParam(name = "date", required = false) LocalDate date,
-                                             @RequestParam(name = "complexity", required = false) CleaningComplexity complexity) {
+    Collection<CleaningRequest> todoCleaning() {
         //ask reservation service for list of reserved rooms
         //check in own repo if any of that rooms was cleaned already
         //check for special requests
         //return list of rooms to clean
+        List<Reservation> reservations = reservationsService.getReservations();
 
-        Collection<CleaningRequest> requests = cleaningService.getAllCurrentRequests(new ArrayList<>());
-//        requests.forEach((req) -> req.setCleaningComplexity(CleaningComplexity.SPECIAL));
+        Collection<CleaningRequest> requests = cleaningService.getAllCurrentRequests(reservations);
         return requests;
     }
 
