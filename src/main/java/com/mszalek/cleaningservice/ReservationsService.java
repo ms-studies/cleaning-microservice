@@ -1,33 +1,35 @@
 package com.mszalek.cleaningservice;
 
-import com.mszalek.cleaningservice.model.CleaningComplexity;
-import com.mszalek.cleaningservice.model.CleaningRequest;
+
 import com.mszalek.cleaningservice.model.Reservation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ReservationsService {
+    Logger log = LoggerFactory.getLogger(ReservationsService.class);
 
-    private LocalDateTime stringToDate(String string) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        return LocalDateTime.parse(string, formatter);
-    }
 
     public List<Reservation> getReservations() {
-        final String uri = "http://127.0.0.1:8000/booking/api/getBookings";
+        log.info("[Cleaning]: Requesting reservations from booking service....");
+        final String uri = "http://host.docker.internal:8000/booking/api/getBookings";
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<Reservation[]> responseEntity = restTemplate.getForEntity(uri, Reservation[].class);
-        Reservation[] objects = responseEntity.getBody();
-        return Arrays.asList(objects);
+        try {
+            ResponseEntity<Reservation[]> responseEntity = restTemplate.getForEntity(uri, Reservation[].class);
+            Reservation[] objects = responseEntity.getBody();
+            return Arrays.asList(objects);
+        } catch (Exception e) {
+            log.error("[Cleaning]: Couldn't get reservations for booking service");
+            return new ArrayList<>();
+        }
+
 
     }
 }
